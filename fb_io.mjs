@@ -113,12 +113,25 @@ console.log('fb_authenticate ',
 //
 //
  ****************************************************************/
-function fb_writeRecord() {
-console.log('fb_writeRecord ',
-                'color: ' + COL_C + '; background-color: ' + COL_B + ';');
+    function fb_writeRecord(){
+        let toWrite = "hello";
+        console.log('%c fb_writeRecord ',
+        'color: ' + COL_C +
+        '; background-color: ' + COL_B + ';');
 
-}
-
+        const REF = ref(fb_Db, "is/that/working");
+        set(REF, {toWrite}).then(() => {
+            console.log('%c writing successful',
+                'color: ' + COL_C +
+                '; background-color: ' + COL_B + ';');
+        })
+            .catch((error) => {
+                console.log(error);
+                console.log('%c something went wrong! ',
+                    'color: ' + COL_C +
+                    '; background-color: ' + COL_B + ';');
+            })
+    }
 /***************************************************************
 // function fb_readRecord()
 //
@@ -145,8 +158,7 @@ console.log('fb_readAll ',
 //
  ****************************************************************/
 function fb_updateRecord() {
-console.log('fb_updateRecord ',
-                'color: ' + COL_C + '; background-color: ' + COL_B + ';');
+    
 }
 /****************************************************************
  // function fb_read_sorted()

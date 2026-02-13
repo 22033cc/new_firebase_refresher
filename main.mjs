@@ -50,3 +50,4 @@ import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeR
 
 console.log("hello");
 fb_initialise();
+fb_writeRecord();
