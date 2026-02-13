@@ -14,6 +14,8 @@ console.log('%c fb_io.mjs running ',
 
 var fb_Db;
 var userUid;
+var userEmail;
+var userPhoto;
 
 /**************************************************************/
 // Import all external constants & functions required
@@ -78,8 +80,30 @@ function fb_authenticate() {
     PROVIDER.setCustomParameters({
         prompt: 'select_account'
     });
-    signInWithPopup(AUTH, PROVIDER).then((result) => {
-        console.log("THE AUTHENTICATION WAS SUCDCESSFULL")     
+        signInWithPopup(AUTH, PROVIDER).then((result) => {
+            console.log("THE AUTHENTICATION WAS SUCDCESSFULL")    
+            userUid = result.user.uid;
+            userEmail = result.user.email;
+            userPhoto = result.user.photoURL;
+            console.log(userPhoto);
+            console.log(userUid)
+            const REF = ref(fb_Db, "uid")
+
+            //see if they have logged in before:
+            const dbReference = ref(fb_Db, "user_Data/" + userUid +"/display_Name");
+            get(dbReference).then((snapshot) => {
+                var firstName = snapshot.val();
+
+                //if they haven't, make them choose username
+                if (firstName == null){              
+                    document.getElementById("playertalk").innerHTML = "Seems like you haven't made an account yet, "
+                    document.getElementById("form").style = "display: inline-block"
+                } else{
+                    
+                //display game links and such no that they are logged in 
+                document.getElementById("playertalk").innerHTML = "welcome back!"
+                }
+            }
     })
     .catch((error) => {
         console.log("THIS IS AN ERROR WITH AUTHENTICATING")
