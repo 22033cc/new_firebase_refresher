@@ -28,6 +28,7 @@ function changeheader(){
     console.log("headerchanged");
 }
 
+
 window.changeheader = buttonchange;
 
 /***************************************************************/
@@ -50,4 +51,13 @@ import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeR
 
 console.log("hello");
 fb_initialise();
-fb_writeRecord();
+
+function writingValue(){
+    console.log("start converting");
+    var write1 = document.getElementById("inputDatabase").value;
+    console.log(document.getElementById("inputDatabase").innerHTML)
+    console.log(write1);
+    fb_writeRecord(write1);
+}
+
+window.writingValue = writingValue;

@@ -113,8 +113,8 @@ console.log('fb_authenticate ',
 //
 //
  ****************************************************************/
-    function fb_writeRecord(){
-        let toWrite = "hello";
+    function fb_writeRecord(write_1){
+        let toWrite =write_1;
         console.log('%c fb_writeRecord ',
         'color: ' + COL_C +
         '; background-color: ' + COL_B + ';');
