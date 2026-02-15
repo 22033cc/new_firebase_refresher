@@ -36,7 +36,7 @@ window.changeheader = buttonchange;
 /***************************************************************/
 // Import all the constants & functions required from fb_io module
 import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeRecord,
-    fb_readRecord,fb_readAll, fb_updateRecord, fb_read_sorted
+    fb_readRecord,fb_readAll, fb_updateRecord, fb_read_sorted,fb_createAccount,returnUserUid
  }
     from './fb_io.mjs';
     window.fb_initialise = fb_initialise;
@@ -48,6 +48,8 @@ import { fb_initialise, fb_authenticate,fb_detectLoginChange,fb_logOut,fb_writeR
     window.fb_readAll = fb_readAll;
     window.fb_updateRecord  = fb_updateRecord;
     window.fb_read_sorted = fb_read_sorted;
+    window.fb_createAccount = fb_createAccount;
+    window.returnUserUid = returnUserUid;
 
 console.log("hello");
 fb_initialise();
@@ -55,9 +57,12 @@ fb_initialise();
 function writingValue(){
     console.log("start converting");
     var write1 = document.getElementById("inputDatabase").value;
-    console.log(document.getElementById("inputDatabase").innerHTML)
+    var userUid = returnUserUid();
+    console.log(userUid);
+    var path = "user_Data/"+userUid+"/messages"
+    console.log(path);
     console.log(write1);
-    fb_writeRecord(write1);
+    fb_writeRecord(write1,path);
 }
 
 window.writingValue = writingValue;

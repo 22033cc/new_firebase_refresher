@@ -38,7 +38,7 @@ import { ref, set, get, update, query, orderByChild, limitToFirst }
 /**************************************************************/
 export {
     fb_initialise, fb_authenticate, fb_detectLoginChange, fb_logOut, fb_writeRecord, fb_readRecord,
-    fb_readAll, fb_updateRecord, fb_read_sorted
+    fb_readAll, fb_updateRecord, fb_read_sorted,fb_createAccount,returnUserUid
 };
 
 
@@ -71,45 +71,52 @@ function fb_initialise() {
 //
  ****************************************************************/
 function fb_authenticate() {
-    console.log('fb_authenticate ',
-                'color: ' + COL_C + '; background-color: ' + COL_B + ';');
-    const AUTH = getAuth();
-
+    console.log('%c authenticate():',
+        'color:' + COL_C +
+        'background-color:' + COL_B + ';');
+    const AUTH = getAuth(); 
     const PROVIDER = new GoogleAuthProvider();
-    // The following makes Google ask the user to select the account
     PROVIDER.setCustomParameters({
-        prompt: 'select_account'
+        prompt:'select_account'
     });
-        signInWithPopup(AUTH, PROVIDER).then((result) => {
-            console.log("THE AUTHENTICATION WAS SUCDCESSFULL")    
-            userUid = result.user.uid;
-            userEmail = result.user.email;
-            userPhoto = result.user.photoURL;
-            console.log(userPhoto);
-            console.log(userUid)
-            const REF = ref(fb_Db, "uid")
+    //login to users email
+    signInWithPopup(AUTH, PROVIDER).then((result) => {
+        document.getElementById("playertalk").style = "display:inline-block"
+        document.getElementById("playertalk").innerHTML = "thank you for signing in correctly!"
+        //take users uid, email, and photo url
+        userUid = result.user.uid;
+        userEmail = result.user.email;
+        userPhoto = result.user.photoURL;
+        console.log(userPhoto);
+        console.log(userUid)
+        const REF = ref(fb_Db, "uid")
 
-            //see if they have logged in before:
-            const dbReference = ref(fb_Db, "user_Data/" + userUid +"/display_Name");
-            get(dbReference).then((snapshot) => {
-                var firstName = snapshot.val();
-
-                //if they haven't, make them choose username
-                if (firstName == null){              
-                    document.getElementById("playertalk").innerHTML = "Seems like you haven't made an account yet, "
-                    document.getElementById("form").style = "display: inline-block"
-                } else{
-                    
-                //display game links and such no that they are logged in 
-                document.getElementById("playertalk").innerHTML = "welcome back!"
-                }
-            }
+        //see if they have logged in before:
+         const dbReference = ref(fb_Db, "user_Data/" + userUid +"/display_Name");
+        get(dbReference).then((snapshot) => {
+             var firstName = snapshot.val(); 
+            document.getElementById("login").style = "display: none"
+             //if they haven't, make them choose username
+             if (firstName == null){              
+                document.getElementById("playertalk").innerHTML = "Seems like you haven't made an account yet, "
+                document.getElementById("form").style = "display: inline-block"
+             } else{
+                
+            //display game links and such no that they are logged in 
+            document.getElementById("playertalk").innerHTML = "welcome back!"
+            document.getElementById("form").style = "display:none"
+            document.getElementById("signIn").innerHTML = "<p>User Name:"+firstName+"</p>"
+            document.getElementById("profilePic").innerHTML =" <img src= "+ userPhoto +" alt='Your Profile Picture!'>"
+             }
+        })
     })
-    .catch((error) => {
-        console.log("THIS IS AN ERROR WITH AUTHENTICATING")
-    });
+        .catch((error) => {
+            alert("Uh Oh, Something went wrong!")
+            console.log(error)
+        });
 
 }
+
 
 /***************************************************************
 // function fb_detectLoginChange()
@@ -137,14 +144,13 @@ console.log('fb_authenticate ',
 //
 //
  ****************************************************************/
-    function fb_writeRecord(write_1){
-        let toWrite =write_1;
+    function fb_writeRecord(write_1,path){
         console.log('%c fb_writeRecord ',
         'color: ' + COL_C +
         '; background-color: ' + COL_B + ';');
 
-        const REF = ref(fb_Db, "is/that/working");
-        set(REF, {toWrite}).then(() => {
+        const REF = ref(fb_Db, path);
+        set(REF, {write_1}).then(() => {
             console.log('%c writing successful',
                 'color: ' + COL_C +
                 '; background-color: ' + COL_B + ';');
@@ -194,3 +200,79 @@ function fb_updateRecord() {
     console.log('fb_read_sorted ',
                 'color: ' + COL_C + '; background-color: ' + COL_B + ';');
  }
+
+/****************************************************************
+ // function fb_createAccount()
+ //
+ //
+ ****************************************************************/
+ function fb_createAccount(){
+    console.log('Fb_createAccount ',
+                'color: ' + COL_C + '; background-color: ' + COL_B + ';');
+
+    var firstName = document.getElementById('UserName').value
+    console.log(firstName)
+    if (firstName == null){
+        console.log("balls")
+        console.log(firstName)
+    }
+
+    if(firstName == null || firstName == undefined || firstName.trim() == ""||firstName == ""){
+
+        document.getElementById("playertalk").innerHTML =firstName +" is an invalid user Name"
+
+    }else{
+        
+
+        console.log(firstName)
+        var firstAge;
+        console.log(document.getElementById("userage").value)
+        firstAge = document.getElementById("userage").value
+        
+        if(firstAge == null&& firstAge == undefined&&firstAge.trim() == ""&&firstAge =="e"&&firstAge == 120 && firstAge <= 5){
+        document.getElementById("playertalk").innerHTML ="please express your age as an interger rounded down & you must be between the ages 5-120"    
+    }else{
+        
+
+        console.log("why isn't it working? why? why?")
+            //creates nodes for display name, email, age, high scores for both games and photo url
+                    const REF = ref(fb_Db, "user_Data/"+ userUid)
+
+                    set(REF, {
+                        display_Name:firstName,
+                        email:userEmail,
+                        photo_URL:userPhoto,
+                        age:firstAge,
+                        messages:null
+                    }).then(() => {
+                        console.log("PLEASE WORK")
+                        //displays all buttons to play games now that they are signed in 
+                        document.getElementById("signIn").innerHTML = "<p>User Name:"+firstName+"</p>"
+                        document.getElementById("profile_picture").innerHTML =" <img src= "+ userPhoto +" alt='Your Profile Picture!'>"
+
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        console.log('%c something went wrong! ',
+                        'color: ' + COL_C +
+                        '; background-color: ' + COL_B + ';');
+                    })
+    
+
+    }
+
+    }
+    document.getElementById("form").style = "display:none"
+    document.getElementById("playertalk").innerHTML = "account successfully created!"
+            
+
+}
+/***************************************************************
+// function fb_readRecord()
+//
+//
+ ****************************************************************/
+function returnUserUid(){
+    return userUid;
+}
